@@ -9,6 +9,12 @@ migrate existing dashboards to a newer version.
 ## Usage
 
 ```bash
+$ mage ImportBeats
+```
+
+... or using `go run` (no need to install `mage`):
+
+```bash
 $ go run dev/import-beats/*.go -help
   Usage of /var/folders/gz/dht4sjdx5w9f72knybys10zw0000gn/T/go-build249388773/b001/exe/agent:
     -beatsDir string
@@ -44,7 +50,15 @@ $ mage ImportBeats
 
 ## How does the import procedure work
 
-TODO
+This section describes next steps of the `import-beats` script that are performed to build integration packages in
+the output directory.
+
+Keep in mind that the script doesn't clean previously created artifacts, so you may encounter leftovers (detached
+dashboards, renamed ingest pipeline, etc.). If you need to preserve a clean state in the output directory (which is
+versioned), remove its content before executing the script.
+
+The script requires few repositories (Kibana, EUI, etc.) to be present, but doesn't require to execute any of build
+targets. It depends only on the existing, version content, so simple `git clone` should be enough.
 
 ## Troubleshooting
 
