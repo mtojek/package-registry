@@ -60,6 +60,58 @@ versioned), remove its content before executing the script.
 The script requires few repositories (Kibana, EUI, etc.) to be present, but doesn't require to execute any of build
 targets. It depends only on the existing, version content, so simple `git clone` should be enough.
 
+### Package Repository
+
+The package repository is responsible for building packages - loading package data from sources (Beats modules, Kibana
+resources, etc.) and writing them to disk. It supports two types of beats - logs and metrics.
+
+#### Load input data from sources
+
+The script needs to visit and process input data from [beats](https://github.com/elastic/beats), generally logs and
+metrics modules.
+
+Starting with modules, it collects and processes information about module fields, release type, icons, screenshots,
+Kibana dashboards and docs. While browsing datasets content, it focuses on fields specific for the dataset, release
+type, ingestion pipeline, stream and agent configuration.
+
+##### Fields
+
+Fields are extracted from `fields.yml` files and divided into 3 buckets - ECS fields, module fields
+and package fields.
+
+##### Integration title
+
+The correct spelling makes better impression on users, so the scripts uses `title` property in the module fields
+as the proper form. Remember to adjust this value if working on the migration from Beats.
+
+##### Release type
+
+Values: _beta, experimental, ga_
+
+The value depends on definitions in module and dataset fields. The scripts determines the correct release type
+for dataset, depending on overall release status for module (e.g. dataset can't be annotated as GA if the entire module
+is in beta).
+
+##### Images: icons
+
+TODO
+
+##### Images: screenshots
+
+TODO
+
+##### Kibana dashboards
+
+TODO
+
+##### Documentation
+
+TODO
+
+#### Write package content to disk
+
+TODO
+
 ## Troubleshooting
 
 *Importing process takes too long.*
