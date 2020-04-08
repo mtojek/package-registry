@@ -60,10 +60,10 @@ versioned), remove its content before executing the script.
 The script requires few repositories (Kibana, EUI, etc.) to be present, but doesn't require to execute any of build
 targets. It depends only on the existing, version content, so simple `git clone` should be enough.
 
-### Package Repository
+### Package repository
 
 The package repository is responsible for building packages - loading package data from sources (Beats modules, Kibana
-resources, etc.) and writing them to disk. It supports two types of beats - logs and metrics.
+resources, etc.) and writing them to disk. It supports two types of beats - **logs** and **metrics**.
 
 #### Load input data from sources
 
@@ -94,8 +94,8 @@ is in beta).
 
 ##### Images
 
-The script supports two kinds of images - icons and screenshots. Even though they're stored in different media formats,
-they analyzed to prepare a metadata information (title, size, media type).
+The script supports two kinds of images - **icons** and **screenshots**. Even though they're stored in different media
+formats, they analyzed to prepare a metadata information (title, size and media type).
 
 ###### Icons
 
@@ -109,15 +109,72 @@ The script parses module docs to find and collect all references to screenshots 
 
 ##### Kibana dashboards
 
-TODO
+The script performs a convertion of all existing Kibana dashboards into new format. Packages stores Kibana objects
+divided into buckets based on the object type (e.g. dashboards, visualizations, maps).
+
+Many existing dashboards are compliant with earlier Kibana version hence they're loaded to Kibana to let it migrate to
+the newer format (Kibana instance must be accessible during the importing process).
+
+Every Kibana object needs to be stored in a decoded form (unpacked JSON format) as it's easier to find changes between
+particular revisions.
+
+There is also a change related to the `event.module` field - the field is no longer available in the integration.
+The script adjusts dashboards automatically by replacing all references with a special clause including all datasets,
+e.g.:
+
+_The module "duck" contains 3 datasets: foo, bar, baz._
+
+The `event.module = duck` will be transformed into `(event.dataset = foo OR event.dataset = bar OR event.dataset = baz)`.
+
+##### Dependency requirements
+
+The scripts parses available Kibana objects for information about supported versions and determines which is
+the minimal required Kibana version.
+
+The required version of the Elasticsearch is hardcoded (`>7.0.1`).
 
 ##### Documentation
 
-TODO
+Documentation present in the Beats repository refers to modules, metricsets and filesets. Unfortunately it doesn't fit
+well in the concept of integrations, so all documentation pages need to be adjusted.
+
+Every integration may have a doc template defined, so that the script can pick it up while building packages.
+The template can refer to functions, e.g. to render exported fields, used by a dataset.
+
+##### Ingest pipelines
+
+If the fileset used an ingest pipeline, the script includes in the target package - renamed to `default.json` or
+`default.yml`.
+
+##### Streams
+
+Stream configuration defines available Metricbeat and Filebeat settings used to reconfigure the integration.
+
+Depending on the dataset type, the configuration can be imported from the following files: `_meta/config.*.yml`
+for Metricbeat or `manifest.yml` for Filebeat. The new format provides additional properties (required, show_user,
+title, multi), which can be used to provide better user experience in Kibana UI. Unfortunately the script can't
+detect these properties automatically, so manual adjustments will be required.
+
+Metricbeat configuration might be hard to extract because of missing variable definitions (`_meta/config.*.yml` are
+like samples). The script analyzes the `_meta/config.*.yml` files and tries to deduce, which variables belong to
+particular metricsets.
+
+##### Agent configuration
+
+The agent configuration is a template used by Kibana to prepare the final configuration deployed on agents. The script
+needs to convert the Beats configuration as the templating engine has changed from the standard Golang one to
+the [handlebarsjs](https://handlebarsjs.com/). The script doesn't run any advanced syntax analysis and bases only on
+simple find-and-replace functions (which actually covers vast majority of cases).
+
+At the moment, a developer is obliged to verify the convertion result.
 
 #### Write package content to disk
 
-TODO
+The script writes down all packages to the specified output directory. As it doesn't remove existing resources, it's
+safer to clean the output directory first. This is the moment when copying resources, rendering doc templates and
+creating required directories happens.
+
+At the moment all packages are annotated with version `0.0.1`.
 
 ## Troubleshooting
 
