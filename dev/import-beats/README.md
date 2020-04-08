@@ -95,7 +95,7 @@ is in beta).
 ##### Images
 
 The script supports two kinds of images - **icons** and **screenshots**. Even though they're stored in different media
-formats, they analyzed to prepare a metadata information (title, size and media type).
+formats, they're analyzed to prepare a metadata information (title, size and media type).
 
 ###### Icons
 
@@ -105,15 +105,15 @@ in tutorials are processed.
 
 ###### Screenshots
 
-The script parses module docs to find and collect all references to screenshots presenting Kibana dashboards.
+The script parses module docs to find and collect all references to screenshots showing Kibana dashboards.
 
 ##### Kibana dashboards
 
 The script performs a convertion of all existing Kibana dashboards into new format. Packages stores Kibana objects
 divided into buckets based on the object type (e.g. dashboards, visualizations, maps).
 
-Many existing dashboards are compliant with earlier Kibana version hence they're loaded to Kibana to let it migrate to
-the newer format (Kibana instance must be accessible during the importing process).
+Many existing dashboards are compliant with earlier Kibana versions hence they're loaded to the Kibana instance to let
+it migrate to the newer format (Kibana instance must be accessible during the importing process).
 
 Every Kibana object needs to be stored in a decoded form (unpacked JSON format) as it's easier to find changes between
 particular revisions.
@@ -124,26 +124,27 @@ e.g.:
 
 _The module "duck" contains 3 datasets: foo, bar, baz._
 
-The `event.module = duck` will be transformed into `(event.dataset = foo OR event.dataset = bar OR event.dataset = baz)`.
+The `event.module = duck` will be transformed into
+`(event.dataset = duck.foo OR event.dataset = duck.bar OR event.dataset = duck.baz)`.
 
 ##### Dependency requirements
 
-The scripts parses available Kibana objects for information about supported versions and determines which is
+The scripts parses available Kibana objects for information about supported versions and determines what is
 the minimal required Kibana version.
 
 The required version of the Elasticsearch is hardcoded (`>7.0.1`).
 
 ##### Documentation
 
-Documentation present in the Beats repository refers to modules, metricsets and filesets. Unfortunately it doesn't fit
+Documentation in the Beats repository refers to modules, metricsets and filesets. Unfortunately it doesn't fit
 well in the concept of integrations, so all documentation pages need to be adjusted.
 
 Every integration may have a doc template defined, so that the script can pick it up while building packages.
-The template can refer to functions, e.g. to render exported fields, used by a dataset.
+The template can refer to functions, e.g. to render a table with fields used by a dataset.
 
 ##### Ingest pipelines
 
-If the fileset used an ingest pipeline, the script includes in the target package - renamed to `default.json` or
+If the fileset used an ingest pipeline, the script includes it in the target package, but renamed to `default.json` or
 `default.yml`.
 
 ##### Streams
