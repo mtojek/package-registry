@@ -48,7 +48,7 @@ https://github.com/elastic/kibana
 $ mage ImportBeats
 ```
 
-## How does the import procedure work
+## Package import procedure
 
 This section describes next steps of the `import-beats` script that are performed to build integration packages in
 the output directory.
@@ -92,13 +92,20 @@ The value depends on definitions in module and dataset fields. The scripts deter
 for dataset, depending on overall release status for module (e.g. dataset can't be annotated as GA if the entire module
 is in beta).
 
-##### Images: icons
+##### Images
 
-TODO
+The script supports two kinds of images - icons and screenshots. Even though they're stored in different media formats,
+they analyzed to prepare a metadata information (title, size, media type).
 
-##### Images: screenshots
+###### Icons
 
-TODO
+The icons are loaded from the following sources: Kibana home tutorials and Elastic UI. Icons must be in SVG format and
+have defined dimensions (information stored in manifest, used by Kibana). Keep in mind that only icon files referenced
+in tutorials are processed.
+
+###### Screenshots
+
+The script parses module docs to find and collect all references to screenshots presenting Kibana dashboards.
 
 ##### Kibana dashboards
 
@@ -114,7 +121,7 @@ TODO
 
 ## Troubleshooting
 
-*Importing process takes too long.*
+### Importing process takes too long
 
 While developeing, you can try to perform the migration with skipping migration of all Kibana objects,
 as this is the most time consuming part of whole process:
