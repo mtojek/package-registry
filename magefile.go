@@ -32,7 +32,6 @@ var (
 	buildDir       = "./build"
 	storageRepoDir = filepath.Join(buildDir, "package-storage")
 	packagePaths   = []string{filepath.Join(storageRepoDir, "packages"), "./dev/packages/example/"}
-	tarGz          = true
 )
 
 func Build() error {
@@ -91,10 +90,9 @@ func fetchPackageStorage() error {
 func Check() error {
 	Format()
 
-	// Setup the variables for the tests and not create tarGz files
+	// Setup the variables for the tests
 	publicDir = "./testdata/public"
 	packagePaths = []string{"testdata/package"}
-	tarGz = false
 
 	err := Build()
 	if err != nil {
